@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>API 文档 · LLM Decision</title>
+  <style>
+    :root { --ink:#222; --muted:#717171; --line:#e9e9e7; --soft:#f8f8f7; --header:64px; }
+    * { box-sizing:border-box; }
+    html { scroll-padding-top:96px; }
+    body { margin:0; background:#fff; color:var(--ink); font:14px/1.8 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; -webkit-font-smoothing:antialiased; }
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; color:inherit; cursor:pointer; }
+    :focus-visible { outline:2px solid #555; outline-offset:4px; }
+    p { margin:10px 0 18px; color:#626262; }
+    code,pre { font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace; }
+    code { font-size:12px; }
+    p code,td code { padding:2px 4px; background:#f4f4f2; border-radius:3px; }
+    .skip { position:fixed; top:-60px; left:20px; z-index:10; padding:8px 16px; background:#222; color:#fff; }
+    .skip:focus { top:10px; }
+    .topbar { height:var(--header); position:sticky; top:0; z-index:3; background:#fff; border-bottom:1px solid var(--line); }
+    .topbar-inner { max-width:1260px; margin:auto; padding:0 32px; height:100%; display:flex; align-items:center; gap:30px; }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:600; font-size:16px; letter-spacing:-.4px; }
+    .mark { width:26px; height:26px; display:grid; place-items:center; background:#262626; color:#fff; border-radius:6px; font-size:14px; }
+    .top-label { padding-left:28px; border-left:1px solid #ddd; font-size:12px; color:#777; }
+    .version { margin-left:auto; color:#888; font:11px/1.6 Consolas,monospace; }
+    .layout { max-width:1196px; padding:0 32px; margin:auto; display:grid; grid-template-columns:180px minmax(0,760px); gap:72px; }
+    .sidebar { position:sticky; top:var(--header); height:calc(100vh - var(--header)); overflow:auto; padding:38px 0 28px; }
+    .nav-label { margin:0 0 12px 12px; font-size:11px; color:#8a8a85; }
+    .sidebar nav { display:grid; gap:2px; }
+    .sidebar a { display:block; padding:5px 12px; border-radius:5px; font-size:13px; color:#727272; }
+    .sidebar a.sub { padding-left:26px; font-size:12px; }
+    .sidebar a:hover { color:#222; background:#f8f8f6; }
+    .sidebar a[aria-current] { background:#f0f0ed; color:#222; font-weight:500; }
+    main { min-width:0; padding:40px 0 72px; }
+    .eyebrow { margin:0 0 8px; color:#888; font-size:12px; }
+    h1 { margin:0 0 12px; font-size:32px; line-height:1.4; font-weight:600; letter-spacing:-.9px; }
+    .lead { margin:0; color:#666; font-size:14px; }
+    section { margin-top:42px; }
+    h2 { margin:0 0 15px; font-size:21px; line-height:1.5; font-weight:600; letter-spacing:-.4px; }
+    h3 { margin:29px 0 8px; font-size:17px; font-weight:600; }
+    h3 span { margin-left:10px; color:#888; font-size:13px; font-weight:400; }
+    .field { padding:15px 0; border-top:1px solid var(--line); }
+    .field:first-of-type { border-top:0; padding-top:0; }
+    .field-head { display:flex; align-items:baseline; flex-wrap:wrap; gap:10px; }
+    .field-name { font-weight:600; font-size:13px; }
+    .field-type { font:11px/1.7 Consolas,monospace; color:#85857e; }
+    .required { font-size:10px; color:#936b5e; }
+    .field p { margin:5px 0 0; font-size:13px; }
+    .note { padding-left:13px; border-left:2px solid #ddd; font-size:12px; color:#777; }
+    .small { font-size:12px; color:#85857e; }
+    .table-wrap { width:100%; overflow-x:auto; }
+    table { width:100%; text-align:left; border-collapse:collapse; font-size:13px; }
+    th { color:#85857e; font-size:11px; font-weight:500; }
+    td,th { padding:10px 14px 10px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+    td { color:#606060; }
+    td:first-child { white-space:nowrap; }
+    td code { font-size:12px; }
+    .type-definition { margin:8px 0 14px; }
+    .type-definition dt { display:inline; font-size:12px; }
+    .type-definition dd { display:inline; margin:0 0 0 8px; color:#626262; font-size:13px; }
+    .code-block { margin:16px 0; border:1px solid #e5e5e1; border-radius:8px; overflow:hidden; background:#fafaf9; }
+    .code-head { padding:9px 14px; display:flex; align-items:center; justify-content:space-between; gap:16px; color:#808079; background:#f5f5f3; border-bottom:1px solid #e9e9e5; font-size:11px; }
+    .code-block pre { margin:0; padding:17px 19px; overflow:auto; line-height:1.8; }
+    .code-block pre code { font-size:12px; color:#44443f; }
+    .code-block.compact pre { padding:14px 19px; }
+    .copy { padding:1px 0 1px 8px; border:0; background:none; color:#85857e; font-size:11px; white-space:nowrap; }
+    .copy:hover { color:#222; }
+    .token-key { color:#484843; }
+    .token-string { color:#5a7356; }
+    .token-number { color:#8e6544; }
+    .tabs { display:flex; align-items:center; gap:20px; }
+    .tab { padding:1px 0; border:0; background:none; color:#898980; font-size:12px; }
+    .tab[aria-selected="true"] { color:#222; font-weight:600; }
+    [hidden] { display:none !important; }
+    .code-label { margin:22px 0 -5px; font-size:12px; color:#666; }
+    .limits { margin-top:22px; }
+    .mobile-nav { display:none; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    @media (max-width:1050px) { .layout { grid-template-columns:156px minmax(0,1fr); gap:40px; } }
+    @media (max-width:760px) { :root { --header:56px; } .topbar-inner { padding:0 22px; gap:20px; } .brand { font-size:14px; } .top-label { display:none; } .layout { display:block; padding:0 22px; max-width:690px; } .sidebar { display:none; } .mobile-nav { display:flex; gap:22px; padding:14px 0; border-bottom:1px solid var(--line); overflow:auto; white-space:nowrap; font-size:12px; color:#727272; } main { padding-top:25px; } h1 { font-size:28px; } h2 { font-size:20px; } section { margin-top:32px; } .code-block pre { padding:15px; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#content">跳转到正文</a>
+  <header class="topbar"><div class="topbar-inner"><a class="brand" href="{{base_url}}/docs"><span class="mark" aria-hidden="true">L</span>LLM Decision API</a><span class="top-label">API 文档</span><span class="version">v{{version}}</span></div></header>
+  <div class="layout">
+    <aside class="sidebar" aria-label="文档目录">
+      <p class="nav-label">本页内容</p>
+      <nav id="section-nav">
+        <a href="#endpoint" aria-current="location">接口地址</a>
+        <a href="#request">请求体</a>
+        <a href="#questions">问题类型</a>
+        <a class="sub" href="#noul">Noul · 条件判断</a>
+        <a class="sub" href="#choice">Choice · 选项选择</a>
+        <a class="sub" href="#score">Score · 等级评分</a>
+        <a href="#response">返回体</a>
+        <a href="#answers">答案类型</a>
+        <a class="sub" href="#noul-answer">Noul 答案</a>
+        <a class="sub" href="#choice-answer">Choice 答案</a>
+        <a class="sub" href="#score-answer">Score 答案</a>
+        <a href="#errors">错误处理</a>
+      </nav>
+    </aside>
+    <nav class="mobile-nav" aria-label="文档目录"><a href="#endpoint">接口</a><a href="#request">请求体</a><a href="#questions">问题类型</a><a href="#response">返回体</a><a href="#answers">答案类型</a><a href="#errors">错误处理</a></nav>
+    <main id="content">
+      <p class="eyebrow">接口参考</p>
+      <h1>API 文档</h1>
+      <p class="lead">提交一份资料和一组问题，按问题 ID 获取结构化判断结果。</p>
+
+      <section id="endpoint">
+        <h2>接口地址</h2>
+        <div class="code-block compact"><div class="code-head"><span>HTTP</span><button type="button" class="copy" data-copy="endpoint-code" aria-label="复制接口地址及请求头">复制</button></div><pre><code id="endpoint-code" data-example>{{endpoint}}</code></pre></div>
+        <p class="small">{{auth_note}}</p>
+      </section>
+
+      <section id="request">
+        <h2>请求体</h2>
+        <div class="field"><div class="field-head"><code class="field-name">state</code><span class="field-type">string | object | array</span><span class="required">必填</span></div><p>待判断的资料，例如用户消息、对话记录或业务数据。所有问题共享这份资料。</p></div>
+        <div class="field"><div class="field-head"><code class="field-name">questions</code><span class="field-type">map&lt;string, Question&gt;</span><span class="required">必填</span></div><p>1～{{max_questions}} 个问题。键是自定义的问题 ID，值是下文的 <a href="#questions"><code>Question</code></a>；结果按相同 ID 返回。</p></div>
+        <p class="code-label">调用示例</p>
+        <div class="code-block">
+          <div class="code-head"><div class="tabs" role="tablist" aria-label="调用语言"><button type="button" class="tab" id="tab-curl" role="tab" aria-selected="true" aria-controls="curl-panel" data-language="curl">cURL</button><button type="button" class="tab" id="tab-python" role="tab" aria-selected="false" aria-controls="python-panel" tabindex="-1" data-language="python">Python</button></div><button type="button" class="copy" id="copy-call" data-copy="curl-code" aria-label="复制调用示例">复制</button></div>
+          <pre id="curl-panel" role="tabpanel" aria-labelledby="tab-curl" tabindex="0"><code id="curl-code" data-example>{{curl_example}}</code></pre>
+          <pre id="python-panel" role="tabpanel" aria-labelledby="tab-python" tabindex="0" hidden><code id="python-code" data-example>{{python_example}}</code></pre>
+        </div>
+        <p class="small">本例判断客户是否提出退款要求。Python 示例使用标准库，无需安装额外依赖。</p>
+      </section>
+
+      <section id="questions">
+        <h2>问题类型</h2>
+        <p>每个问题包含 <code>type</code> 和 <code>instructions</code>，并按题型定义 <code>criteria</code>。同一次请求可混合三种题型，各题独立判断。</p>
+        <div class="field"><div class="field-head"><code class="field-name">instructions</code><span class="field-type">string | object | array</span><span class="required">必填</span></div><p>本题要判断的内容，不可为空。需要附带参考数据时，可使用对象或数组。</p></div>
+
+        <div id="noul">
+          <h3>Noul<span>条件判断</span></h3>
+          <p>判断一个条件是否成立，返回 0～1 的成立概率。</p>
+          <dl class="type-definition"><dt><code>criteria</code> <span class="field-type">object | null · 可选</span></dt><dd>可用 <code>"true"</code>、<code>"false"</code> 自定义正反描述，值为字符串、对象或数组；未提供的项使用默认描述。</dd></dl>
+          <div class="code-block"><div class="code-head"><span>Noul 问题定义 · 放入 questions</span><button type="button" class="copy" data-copy="noul-question" aria-label="复制 Noul 问题定义">复制</button></div><pre><code id="noul-question" data-example data-json>{{noul_question}}</code></pre></div>
+        </div>
+
+        <div id="choice">
+          <h3>Choice<span>选项选择</span></h3>
+          <p>从指定选项中选择一项，并返回各选项的概率。</p>
+          <dl class="type-definition"><dt><code>criteria</code> <span class="field-type">object · 必填</span></dt><dd>2～{{max_options}} 项，键为选项名称，值为字符串、对象、数组或 <code>null</code>。值为 <code>null</code> 时使用名称作为描述。</dd></dl>
+          <div class="code-block"><div class="code-head"><span>Choice 问题定义 · 放入 questions</span><button type="button" class="copy" data-copy="choice-question" aria-label="复制 Choice 问题定义">复制</button></div><pre><code id="choice-question" data-example data-json>{{choice_question}}</code></pre></div>
+        </div>
+
+        <div id="score">
+          <h3>Score<span>等级评分</span></h3>
+          <p>按有序等级评估资料，返回各等级下标的概率加权平均。</p>
+          <dl class="type-definition"><dt><code>criteria</code> <span class="field-type">array · 必填</span></dt><dd>2～{{max_options}} 项，按等级顺序排列，下标从 0 开始。每项为字符串、对象或数组。</dd></dl>
+          <div class="code-block"><div class="code-head"><span>Score 问题定义 · 放入 questions</span><button type="button" class="copy" data-copy="score-question" aria-label="复制 Score 问题定义">复制</button></div><pre><code id="score-question" data-example data-json>{{score_question}}</code></pre></div>
+        </div>
+        <p class="note">问题 ID 与选项名称不可为空白，请求不接受未定义字段。</p>
+      </section>
+
+      <section id="response">
+        <h2>返回体</h2>
+        <p>成功时返回 HTTP 200，每个问题对应一个答案。</p>
+        <div class="field"><div class="field-head"><code class="field-name">model</code><span class="field-type">string</span></div><p>实际执行判断的模型名称。</p></div>
+        <div class="field"><div class="field-head"><code class="field-name">answers</code><span class="field-type">map&lt;string, Answer&gt;</span></div><p>键与请求中的问题 ID 一一对应，值为下文的 <a href="#answers"><code>Answer</code></a>。</p></div>
+        <div class="field"><div class="field-head"><code class="field-name">usage</code><span class="field-type">object</span></div><p><code>input_tokens</code> 和 <code>output_tokens</code> 分别为本次请求的输入、输出 token 合计。</p></div>
+        <div class="code-block"><div class="code-head"><span>响应体示例 · 对应上方调用</span><button type="button" class="copy" data-copy="response-example" aria-label="复制响应体示例">复制</button></div><pre><code id="response-example" data-example data-json>{{response_example}}</code></pre></div>
+        <p class="small">文档中的数值仅用于说明响应结构。</p>
+      </section>
+
+      <section id="answers">
+        <h2>答案类型</h2>
+        <p>每个答案的 <code>type</code> 与对应问题一致。</p>
+        <div id="noul-answer">
+          <h3>Noul 答案</h3>
+          <p><code>noul</code> 是 0～1 的数值，越接近 1，表示条件越可能成立；不返回额外的 <code>confidence</code>。</p>
+          <div class="code-block"><div class="code-head"><span>answers 中的单个答案</span><button type="button" class="copy" data-copy="noul-answer-code" aria-label="复制 Noul 答案">复制</button></div><pre><code id="noul-answer-code" data-example data-json>{{noul_answer}}</code></pre></div>
+        </div>
+        <div id="choice-answer">
+          <h3>Choice 答案</h3>
+          <table><thead><tr><th scope="col">字段</th><th scope="col">说明</th></tr></thead><tbody>
+            <tr><td><code>choice</code></td><td>所选选项名称，与 criteria 的键对应。</td></tr>
+            <tr><td><code>probabilities</code></td><td>每个选项的概率，总和为 1。</td></tr>
+            <tr><td><code>confidence</code></td><td>按选项数量缩放的最高概率优势，范围 0～1。</td></tr>
+          </tbody></table>
+          <div class="code-block"><div class="code-head"><span>answers 中的单个答案</span><button type="button" class="copy" data-copy="choice-answer-code" aria-label="复制 Choice 答案">复制</button></div><pre><code id="choice-answer-code" data-example data-json>{{choice_answer}}</code></pre></div>
+        </div>
+        <div id="score-answer">
+          <h3>Score 答案</h3>
+          <table><thead><tr><th scope="col">字段</th><th scope="col">说明</th></tr></thead><tbody>
+            <tr><td><code>score</code></td><td>等级下标的概率加权平均，范围 0～等级数减 1，可以是小数。</td></tr>
+            <tr><td><code>legend</code></td><td>等级下标到原始描述的映射，保留对象与数组结构。</td></tr>
+            <tr><td><code>probabilities</code></td><td>每个等级的概率，总和为 1；键为字符串下标。</td></tr>
+            <tr><td><code>confidence</code></td><td>等级概率的集中程度，范围 0～1。</td></tr>
+          </tbody></table>
+          <div class="code-block"><div class="code-head"><span>answers 中的单个答案</span><button type="button" class="copy" data-copy="score-answer-code" aria-label="复制 Score 答案">复制</button></div><pre><code id="score-answer-code" data-example data-json>{{score_answer}}</code></pre></div>
+        </div>
+        <p class="note">概率与 confidence 反映候选之间的评分分布，不等同于实际判断正确率。</p>
+      </section>
+
+      <section id="errors">
+        <h2>错误处理</h2>
+        <p>任一问题失败，整个请求返回错误，不返回部分答案。可用响应头 <code>X-Request-ID</code> 对照服务日志。</p>
+        <div class="code-block"><div class="code-head"><span>错误响应示例</span><button type="button" class="copy" data-copy="error-example" aria-label="复制错误响应示例">复制</button></div><pre><code id="error-example" data-example data-json>{
+  "error": {
+    "code": "invalid_request",
+    "message": "请求字段校验失败。",
+    "request_id": "..."
+  }
+}</code></pre></div>
+        <p class="small">错误可能附带问题 ID <code>question_id</code> 或字段校验信息 <code>details</code>。</p>
+        <table><thead><tr><th scope="col">状态码</th><th scope="col">说明</th></tr></thead><tbody>
+          <tr><td>400 / 422</td><td>JSON 无效或参数校验失败，按错误信息修正请求。</td></tr>
+          <tr><td>401</td><td>服务访问密钥缺失或无效。</td></tr>
+          <tr><td>404 / 405</td><td>接口路径或 HTTP 方法不正确。</td></tr>
+          <tr><td>408 / 413 / 415</td><td>请求体接收超时、体积过大或媒体类型不支持。</td></tr>
+          <tr><td>499</td><td>客户端已断开连接，记录于服务日志。</td></tr>
+          <tr><td>500 / 502</td><td>服务内部错误，或上游模型连接、响应异常。</td></tr>
+          <tr><td>503 / 504</td><td>服务暂不可用，或模型调用、决策处理超时。</td></tr>
+        </tbody></table>
+        <div class="limits"><h3>当前调用限制</h3><table><tbody>
+          <tr><td>请求体大小</td><td>{{max_body_bytes}} 字节</td></tr>
+          <tr><td>请求体接收时限</td><td>{{body_timeout}} 秒</td></tr>
+          <tr><td>决策总时限</td><td>{{decision_timeout}} 秒</td></tr>
+        </tbody></table><p class="small">两段时限分别计时，以上数值跟随服务配置。</p></div>
+      </section>
+
+    </main>
+  </div>
+  <div id="copy-status" class="sr-only" role="status" aria-live="polite"></div>
+  <script>
+    (() => {
+      function paint(element) {
+        const text = element.textContent;
+        element.replaceChildren();
+        const tokens = /"(?:\\.|[^"\\])*"|\b\d+(?:\.\d+)?\b/g;
+        let start = 0;
+        for (const match of text.matchAll(tokens)) {
+          element.append(document.createTextNode(text.slice(start, match.index)));
+          const span = document.createElement('span');
+          span.className = match[0][0] === '"' ? (/^\s*:/.test(text.slice(match.index + match[0].length)) ? 'token-key' : 'token-string') : 'token-number';
+          span.textContent = match[0]; element.append(span); start = match.index + match[0].length;
+        }
+        element.append(document.createTextNode(text.slice(start)));
+      }
+      document.querySelectorAll('code[data-example]').forEach(paint);
+      const tabs = [...document.querySelectorAll('[data-language]')];
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(item => {
+            const active = item === tab;
+            item.setAttribute('aria-selected', String(active)); item.tabIndex = active ? 0 : -1;
+            document.getElementById(item.getAttribute('aria-controls')).hidden = !active;
+          });
+          document.getElementById('copy-call').dataset.copy = tab.dataset.language + '-code';
+        });
+        tab.addEventListener('keydown', event => {
+          const next = { ArrowRight:(index + 1) % tabs.length, ArrowLeft:(index + tabs.length - 1) % tabs.length, Home:0, End:tabs.length - 1 }[event.key];
+          if (next !== undefined) { event.preventDefault(); tabs[next].click(); tabs[next].focus(); }
+        });
+      });
+      document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', async () => {
+        const text = document.getElementById(button.dataset.copy).textContent;
+        try {
+          if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(text);
+          else {
+            const area = document.createElement('textarea'); area.value = text; area.style.cssText = 'position:fixed;top:0;left:-9999px'; document.body.append(area); area.select();
+            let copied; try { copied = document.execCommand('copy'); } finally { area.remove(); button.focus({preventScroll:true}); }
+            if (!copied) throw new Error('copy unavailable');
+          }
+          button.textContent = '已复制'; document.getElementById('copy-status').textContent = '示例已复制';
+        } catch { button.textContent = '请手动复制'; document.getElementById('copy-status').textContent = '请选择代码后手动复制'; }
+        setTimeout(() => { button.textContent = '复制'; }, 1800);
+      }));
+      const links = [...document.querySelectorAll('#section-nav a')];
+      const sections = links.map(link => document.querySelector(link.hash));
+      let queued = false;
+      function updateNav() {
+        let current = sections[0];
+        sections.forEach(section => { if (section.getBoundingClientRect().top <= 140) current = section; });
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) current = sections[sections.length - 1];
+        links.forEach(link => { if (link.hash === '#' + current.id) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current'); });
+        queued = false;
+      }
+      window.addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(updateNav); } }, { passive:true });
+      updateNav();
+    })();
+  </script>
+</body>
+</html>

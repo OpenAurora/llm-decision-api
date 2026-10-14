@@ -1,0 +1,19 @@
+{
+  "state": {"message": "同一笔订单扣了两次款，请今天退回多扣部分。"},
+  "questions": {
+    "department": {
+      "type": "choice",
+      "instructions": "选择负责处理的部门。",
+      "criteria": {"refund": "退款问题", "support": "技术故障"}
+    },
+    "refund_requested": {
+      "type": "noul",
+      "instructions": "客户是否明确提出退款要求？"
+    },
+    "urgency": {
+      "type": "score",
+      "instructions": "按客户要求的处理时限判断紧急程度。",
+      "criteria": ["未指定期限", "尽快处理", "今天处理"]
+    }
+  }
+}

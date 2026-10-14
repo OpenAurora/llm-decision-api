@@ -1,0 +1,20 @@
+[Unit]
+Description=LLM Decision HTTP API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=llm-decision-api
+Group=llm-decision-api
+WorkingDirectory=/opt/llm-decision-api
+ExecStart=/opt/llm-decision-api/.venv/bin/llm-decision-api --host 0.0.0.0 --port 8010
+Environment=PYTHONUNBUFFERED=1
+NoNewPrivileges=true
+PrivateTmp=true
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=40
+
+[Install]
+WantedBy=multi-user.target
