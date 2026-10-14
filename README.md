@@ -1,5 +1,7 @@
 # llm-decision-api
 
+**简体中文** | [English](README.en.md)
+
 基于 **Qwen3.8-27B** 开发与测试的 HTTP 语义判断服务，利用模型候选 token 的概率完成结构化决策。通过 `POST /v1/decide` 对同一份上下文中的多个问题独立判断，返回结构化 JSON。
 
 - **Choice**：从候选项中选择答案，返回候选概率与置信度。
